@@ -1,4 +1,6 @@
-module Evalutator where
+module Evaluator where
+
+import Core
 
 
 evaluate :: (Tree String) -> Double

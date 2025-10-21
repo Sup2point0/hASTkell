@@ -1,14 +1,25 @@
 module Core where
 
 
-sanitise :: String -> String
-sanitise = pad_negative . strip_spaces
+data Tree t where
+  Leaf :: t -> Tree t
+  Tree :: (Tree t) -> Operator -> (Tree t) -> (Tree t)
 
-pad_negative :: String -> String
-pad_negative str@('-':_)
-  = '0' : str
-pad_negative str = str
+instance (Show t) => Show (Tree t) where
+  show (Leaf value)
+    = show value
 
-strip_spaces :: String -> String
-strip_spaces str
-  = [char | char <- str, char /= ' ']
+  show (Tree left oper right)
+    =    "[" ++ show left ++ "]"
+      ++ show oper
+      ++ "[" ++ show right ++ "]"
+
+
+data Operator = Plus | Minus | Mult | Div | Exp
+
+instance Show Operator where
+  show Plus = " + "
+  show Minus = " - "
+  show Mult = " * "
+  show Div = " / "
+  show Exp = " ^ "
