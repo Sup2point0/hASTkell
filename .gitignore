@@ -1,2 +1,6 @@
 *.o
 *.hi
+
+dist-newstyle/
+
+main

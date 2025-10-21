@@ -1,3 +1,4 @@
+{-# LANGUAGE GADTs #-}
 module Core where
 
 
