@@ -15,27 +15,33 @@ instance (Show t) => Show (Tree t) where
       ++ "[" ++ show right ++ "]"
 
 
-data Operator = Plus | Minus | Mult | Div
+data Operator = Plus | Minus | Mult | Div | Exp
 
 instance Show Operator where
   show Plus = " + "
   show Minus = " - "
   show Mult = " * "
   show Div = " / "
+  show Exp = " ^ "
 
 
 parse :: String -> (Tree String)
-parse str = parse' (strip_spaces str) ""
+parse str = parse1 (strip_spaces str) ""
 
-parse' :: String -> String -> (Tree String)
-parse' left right
-    = case right of
-      ('+':rest) -> split_with Plus rest
-      ('-':rest) -> split_with Minus rest
-      _ -> case left of
-        (_:_) -> parse' (init left) (last left : right)
-        _     -> Leaf right
-  where
-    split_with :: Operator -> String -> (Tree String)
-    split_with oper rest
-      = Tree (parse left) oper (parse rest)
+parse1 :: String -> String -> (Tree String)
+parse1 left right
+  = case right of
+    ('+':rest) -> Tree (parse left) Plus (parse rest)
+    ('-':rest) -> Tree (parse left) Minus (parse rest)
+    _ -> case left of
+      (_:_) -> parse1 (init left) (last left : right)
+      _     -> parse2 right ""
+
+parse2 :: String -> String -> (Tree String)
+parse2 left right
+  = case right of
+    ('*':rest) -> Tree (parse left) Mult (parse rest)
+    ('/':rest) -> Tree (parse left) Div (parse rest)
+    _ -> case left of
+      (_:_) -> parse2 (init left) (last left : right)
+      _     -> Leaf right
