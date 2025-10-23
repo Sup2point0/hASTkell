@@ -19,6 +19,9 @@ instance (Num t) => Num (Matrix t) where
 
   abs (Matrix entries)
     = Matrix (map (map abs) entries)
+
+  signum (Matrix entries)
+    = Matrix (map (map signum) entries)
   
   (Matrix entries) + (Matrix entries')
       = Matrix entries''
@@ -33,3 +36,6 @@ rows (Matrix entries) = length entries
 
 cols :: (Matrix t) -> Int
 cols (Matrix entries) = maximum (map length entries)
+
+transpose :: (Matrix t) -> (Matrix t)
+transpose (Matrix entries) = undefined

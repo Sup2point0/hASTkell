@@ -38,5 +38,10 @@ test_arithmetic =
   [       -t === Matrix [ [-1, -2, -3], [-4, -5, -6] ]
   ,    abs t === t
   , abs (-t) === t
-  ,   t + t' === Matrix [ [1, 2, 3] , [11, 13, 15] ]
+
+  , signum   t   === Matrix [ [1, 1, 1], [1, 1, 1] ]
+  , signum   t'  === Matrix [ [0, 0, 0], [1, 1, 1] ]
+  , signum (-t') === Matrix [ [0, 0, 0], [-1, -1, -1] ]
+
+  ,    t + t' === Matrix [ [1, 2, 3] , [11, 13, 15] ]
   ] :: [Assertion]
