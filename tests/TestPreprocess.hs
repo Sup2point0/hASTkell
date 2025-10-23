@@ -1,7 +1,7 @@
 module TestPreprocess where
 
 import Test.Tasty
-import Test.Tasty.HUnit (testCase, Assertion)
+import Test.Tasty.HUnit
 
 import Syntax
 import Preprocess
