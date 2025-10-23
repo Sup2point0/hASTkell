@@ -1,5 +1,6 @@
 import Test.Tasty
 
+import TestMatrix
 import TestPreprocess
 
 
@@ -9,5 +10,6 @@ main = defaultMain tests
 
 tests :: TestTree
 tests = testGroup "hASTkell"
-  [ tests_preprocess
+  [ tests_matrix
+  , tests_preprocess
   ]
