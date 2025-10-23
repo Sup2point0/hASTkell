@@ -35,5 +35,8 @@ test_logic =
   ]
 
 test_arithmetic =
-  [ t + t' === Matrix [ [1, 2, 3] , [11, 13, 15] ]
+  [       -t === Matrix [ [-1, -2, -3], [-4, -5, -6] ]
+  ,    abs t === t
+  , abs (-t) === t
+  ,   t + t' === Matrix [ [1, 2, 3] , [11, 13, 15] ]
   ] :: [Assertion]
