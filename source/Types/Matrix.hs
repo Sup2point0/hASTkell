@@ -5,7 +5,21 @@ data Matrix t = Matrix [[t]]
   deriving Show
 
 
+identity :: Int -> Matrix Int
+identity n
+  | n < 0     = error "Cannot create identity matrix with negative dimensions"
+  | n == 0    = Matrix []
+  | otherwise = Matrix [
+      [if (j == i) then 1 else 0 | j <- [1..n] ]
+    | i <- [1..n]
+    ]
+
+
 instance (Eq t) => Eq (Matrix t) where
+  (Matrix []) == (Matrix []) = True
+  (Matrix []) == _           = False
+  _           == (Matrix []) = False
+
   m@(Matrix cells) == m'@(Matrix cells')
     = (
         rows m == rows m'
@@ -20,19 +34,13 @@ instance Functor (Matrix) where
 
 
 instance (Num t) => Num (Matrix t) where
-  negate (Matrix cells)
-    = Matrix (map (map negate) cells)
-
-  abs (Matrix cells)
-    = Matrix (map (map abs) cells)
-
-  signum (Matrix cells)
-    = Matrix (map (map signum) cells)
+  negate = fmap negate
+  abs    = fmap abs   
+  signum = fmap signum
   
-  (Matrix cells) + (Matrix cells')
-      = Matrix cells''
-    where
-      cells'' = map (uncurry (zipWith (+))) (zip cells cells')
+  (Matrix cells) + (Matrix cells') = Matrix (
+      map (uncurry (zipWith (+))) (zip cells cells')
+    )
   
   -- k * (Matrix cells)
   --   = Matrix (map (map (k*)) cells)
@@ -46,14 +54,30 @@ rows (Matrix cells) = length cells
 cols :: (Matrix t) -> Int
 cols (Matrix cells) = maximum (map length cells)
 
+is_square :: (Matrix t) -> Bool
+is_square mat = (rows mat == cols mat)
+
+
 transpose :: (Matrix t) -> (Matrix t)
 transpose (Matrix cells) = Matrix (transpose' cells)
   where
     transpose' :: [[t]] -> [[t]]
     transpose' [] = []
-    transpose' cells = zipped : transpose' rest
-      where (zipped, rest) = foldr zip' ([], []) cells
+    transpose' cells' = zipped : transpose' rest
+      where (zipped, rest) = foldr zip' ([], []) cells'
 
     zip' :: [t] -> ([t], [[t]]) -> ([t], [[t]])
     zip' [] acc = acc
     zip' (x:xs) (zipped, rest) = (x:zipped, xs:rest)
+
+-- invert :: (Num t) => (Matrix t) -> (Matrix t)
+-- invert mat
+--   | not (is_square mat) = error "Cannot invert a non-square matrix"
+--   | otherwise
+--     = (_join_ mat (identity (rows mat)))
+
+
+_join_ :: (Matrix t) -> (Matrix t) -> (Matrix t)
+_join_ (Matrix cells) (Matrix cells') = Matrix (
+    map (uncurry (++)) (zip cells cells')
+  )
