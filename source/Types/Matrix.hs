@@ -6,44 +6,53 @@ data Matrix t = Matrix [[t]]
 
 
 instance (Eq t) => Eq (Matrix t) where
-  m@(Matrix entries) == m'@(Matrix entries')
+  m@(Matrix cells) == m'@(Matrix cells')
     = (
         rows m == rows m'
         && cols m == cols m'
-        && and (map (and . uncurry (zipWith (==))) (zip entries entries'))
+        && and (map (and . uncurry (zipWith (==))) (zip cells cells'))
       )
 
+
+instance Functor (Matrix) where
+  fmap f (Matrix []) = Matrix []
+  fmap f (Matrix cells) = Matrix (map (map f) cells)
+
+
 instance (Num t) => Num (Matrix t) where
-  negate (Matrix entries)
-    = Matrix (map (map negate) entries)
+  negate (Matrix cells)
+    = Matrix (map (map negate) cells)
 
-  abs (Matrix entries)
-    = Matrix (map (map abs) entries)
+  abs (Matrix cells)
+    = Matrix (map (map abs) cells)
 
-  signum (Matrix entries)
-    = Matrix (map (map signum) entries)
+  signum (Matrix cells)
+    = Matrix (map (map signum) cells)
   
-  (Matrix entries) + (Matrix entries')
-      = Matrix entries''
+  (Matrix cells) + (Matrix cells')
+      = Matrix cells''
     where
-      entries'' = map (uncurry (zipWith (+))) (zip entries entries')
+      cells'' = map (uncurry (zipWith (+))) (zip cells cells')
+  
+  -- k * (Matrix cells)
+  --   = Matrix (map (map (k*)) cells)
   
   fromInteger n = Matrix [[fromInteger n]]
 
 
 rows :: (Matrix t) -> Int
-rows (Matrix entries) = length entries
+rows (Matrix cells) = length cells
 
 cols :: (Matrix t) -> Int
-cols (Matrix entries) = maximum (map length entries)
+cols (Matrix cells) = maximum (map length cells)
 
 transpose :: (Matrix t) -> (Matrix t)
-transpose (Matrix entries) = Matrix (transpose' entries)
+transpose (Matrix cells) = Matrix (transpose' cells)
   where
     transpose' :: [[t]] -> [[t]]
     transpose' [] = []
-    transpose' entries = zipped : transpose' rest
-      where (zipped, rest) = foldr zip' ([], []) entries
+    transpose' cells = zipped : transpose' rest
+      where (zipped, rest) = foldr zip' ([], []) cells
 
     zip' :: [t] -> ([t], [[t]]) -> ([t], [[t]])
     zip' [] acc = acc

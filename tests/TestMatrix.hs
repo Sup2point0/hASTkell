@@ -49,7 +49,10 @@ test_arithmetic =
   ] :: [Assertion]
 
 test_operations =
-  [ transpose (Matrix [[0]]) === Matrix [[0]]
+  [ fmap id t === t
+  , fmap (\x -> x * x) t === Matrix [ [1, 4, 9], [16, 25, 36] ]
+
+  , transpose (Matrix [[0]]) === Matrix [[0]]
   , transpose (Matrix [ [0], [1] ]) === Matrix [[0, 1]]
   , transpose t === Matrix [ [1, 4], [2, 5], [3, 6] ]
   ] :: [Assertion]
