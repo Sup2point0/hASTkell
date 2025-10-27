@@ -20,7 +20,9 @@ t' = Matrix
 
 tests_matrix = testGroup "matrix"
   [ test_collection "properties" test_properties
+  , test_collection "logic" test_logic
   , test_collection "arithmetic" test_arithmetic
+  , test_collection "operations" test_operations
   ] :: TestTree
 
 test_properties =
@@ -44,4 +46,10 @@ test_arithmetic =
   , signum (-t') === Matrix [ [0, 0, 0], [-1, -1, -1] ]
 
   ,    t + t' === Matrix [ [1, 2, 3] , [11, 13, 15] ]
+  ] :: [Assertion]
+
+test_operations =
+  [ transpose (Matrix [[0]]) === Matrix [[0]]
+  , transpose (Matrix [ [0], [1] ]) === Matrix [[0, 1]]
+  , transpose t === Matrix [ [1, 4], [2, 5], [3, 6] ]
   ] :: [Assertion]

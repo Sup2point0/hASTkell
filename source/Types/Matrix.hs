@@ -38,4 +38,13 @@ cols :: (Matrix t) -> Int
 cols (Matrix entries) = maximum (map length entries)
 
 transpose :: (Matrix t) -> (Matrix t)
-transpose (Matrix entries) = undefined
+transpose (Matrix entries) = Matrix (transpose' entries)
+  where
+    transpose' :: [[t]] -> [[t]]
+    transpose' [] = []
+    transpose' entries = zipped : transpose' rest
+      where (zipped, rest) = foldr zip' ([], []) entries
+
+    zip' :: [t] -> ([t], [[t]]) -> ([t], [[t]])
+    zip' [] acc = acc
+    zip' (x:xs) (zipped, rest) = (x:zipped, xs:rest)
