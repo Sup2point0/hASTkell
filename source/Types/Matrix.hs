@@ -5,7 +5,7 @@ data Matrix t = Matrix [[t]]
   deriving Show
 
 
-identity :: Int -> Matrix Int
+identity :: (Num t) => Int -> Matrix t
 identity n
   | n < 0     = error "Cannot create identity matrix with negative dimensions"
   | n == 0    = Matrix []
@@ -48,6 +48,9 @@ instance (Num t) => Num (Matrix t) where
   fromInteger n = Matrix [[fromInteger n]]
 
 
+raw :: (Matrix t) -> [[t]]
+raw (Matrix cells) = cells
+
 rows :: (Matrix t) -> Int
 rows (Matrix cells) = length cells
 
@@ -70,11 +73,19 @@ transpose (Matrix cells) = Matrix (transpose' cells)
     zip' [] acc = acc
     zip' (x:xs) (zipped, rest) = (x:zipped, xs:rest)
 
--- invert :: (Num t) => (Matrix t) -> (Matrix t)
--- invert mat
---   | not (is_square mat) = error "Cannot invert a non-square matrix"
---   | otherwise
---     = (_join_ mat (identity (rows mat)))
+invert :: (Num t) => (Matrix t) -> (Matrix t)
+invert (Matrix []) = error
+invert mat
+    | is_square mat = inv
+    | otherwise     = error "Cannot invert a non-square matrix"
+  where
+    aug = _join_ mat (identity (rows mat))
+    add = Matrix [
+        r1,
+        zipWith (uncurry (+)) r1 r2
+      ]
+    (r1 : r2 : _) = raw aug
+    inv = add
 
 
 _join_ :: (Matrix t) -> (Matrix t) -> (Matrix t)
