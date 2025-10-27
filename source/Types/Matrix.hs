@@ -60,6 +60,21 @@ cols (Matrix cells) = maximum (map length cells)
 is_square :: (Matrix t) -> Bool
 is_square mat = (rows mat == cols mat)
 
+determinant :: (Num t) => (Matrix t) -> t
+determinant mat
+    | is_square mat = det
+    | otherwise     = error "Cannot find determinant of a non-square matrix"
+  where
+    det (Matrix [[single]]) = single
+    det (Matrix cells) = map (expand) (row')
+      where
+        (row':rows') = zip [0..] cells
+        expand (i, value) = value * det (mat' i)
+        mat' i = Matrix (foldr (drop i) rows')
+        drop i (j, value) acc
+          | j == i    = acc
+          | otherwise = value : acc
+
 
 transpose :: (Matrix t) -> (Matrix t)
 transpose (Matrix cells) = Matrix (transpose' cells)
